@@ -1,0 +1,6 @@
+HEADERS = session.h \
+          telnetoverxmppsrv.h \
+          telnetoverxmppsrv.h
+
+SOURCES = session.cpp \
+          telnetoverxmppsrv.cpp
