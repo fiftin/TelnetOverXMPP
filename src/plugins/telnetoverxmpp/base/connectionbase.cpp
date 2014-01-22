@@ -5,6 +5,9 @@
 
 #include <interfaces/ifiletransfer.h>
 #include <interfaces/ifilestreamsmanager.h>
+#include <definitions/optionvalues.h>
+#include <definitions/namespaces.h>
+#include <definitions/internalerrors.h>
 
 ConnectionBase::ConnectionBase(IMessageSender *AMessageSender, IFileTransfer *AFileTransfer,
                                IFileStreamsManager *AFileManager,
@@ -57,6 +60,7 @@ QString ConnectionBase::makeNewSid()
 }
 
 
+
 void ConnectionBase::ping()
 {
     if (!FPinging) {
@@ -99,8 +103,45 @@ bool ConnectionBase::sendFile(const QString &APathname) const
     return result;
 }
 
-bool ConnectionBase::sendBigFile(const QString &APathname) const {
-    IFileStream *stream = FFileTransfer->sendFile(this->info().jid, this->info().remoteJid, APathname);
+bool ConnectionBase::fileStreamResponce(const QString &AStreamId, const Stanza &AResponce, const QString &AMethodNS)
+{
+    if (FFileManager!=NULL && FFileManager->streamHandler(AStreamId)==this)
+    {
+        IFileStream *stream = FFileManager->streamById(AStreamId);
+        QDomElement rangeElem = AResponce.firstElement("si",NS_STREAM_INITIATION).firstChildElement("file").firstChildElement("range");
+        if (!rangeElem.isNull())
+        {
+            if (rangeElem.hasAttribute("offset"))
+                stream->setRangeOffset(rangeElem.attribute("offset").toLongLong());
+            if (rangeElem.hasAttribute("length"))
+                stream->setRangeLength(rangeElem.attribute("length").toLongLong());
+        }
+        if (!stream->startStream(AMethodNS))
+            stream->abortStream(XmppError(IERR_FILETRANSFER_TRANSFER_NOT_STARTED));
+        else
+            return true;
+    }
+    return false;
+}
+
+bool ConnectionBase::sendBigFile(const QString &APathname, bool AForce) {
+    IFileStream *stream;
+    if (!AForce) {
+        stream = FFileTransfer->sendFile(this->info().jid, this->info().remoteJid, APathname);
+    }
+    else {
+        if (APathname == QString::null)
+            return false;
+        QString defaultMethod = Options::node(OPV_FILESTREAMS_DEFAULTMETHOD).value().toString();
+        stream = FFileManager->createStream(this, QUuid::createUuid().toString(), this->info().jid,
+                                            this->info().remoteJid, IFileStream::SendFile);
+        stream->setFileName(APathname);
+        QStringList methods;
+        methods.append(defaultMethod);
+        if (!stream->initStream(methods)) {
+            return false;
+        }
+    }
     QString filename;
     if (APathname != QString::null) {
         QFile* file = new QFile(APathname);
@@ -111,7 +152,6 @@ bool ConnectionBase::sendBigFile(const QString &APathname) const {
         file->close();
     }
     this->send(FileMessage::createFile(this->info(), filename, stream->streamId(), FMM_FILETRANSFER));
-
     return true;
 }
 

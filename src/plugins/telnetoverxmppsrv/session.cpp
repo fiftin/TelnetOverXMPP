@@ -39,7 +39,7 @@ bool Session::handleData(const QString &data)
     // Download file command received: @@ <file_name>
     else if (data.startsWith(QString(SESSION_DOWNLAOD_BIG_COMMAND) + " ", Qt::CaseInsensitive)) {
         QString filename = data.mid(strlen(SESSION_DOWNLAOD_BIG_COMMAND) + 1);
-        if (!sendBigFile(filename)) {
+        if (!sendBigFile(filename, true)) {
             send("\nDo not sent a file '"+filename+"'\n");
         }
         return true;
@@ -133,14 +133,6 @@ void Session::init()
     FProcess->start(FProgram, FArguments);
 }
 
-bool Session::fileStreamShowDialog(const QString &AStreamId) {
-    return false;
-}
-
-bool Session::fileStreamResponce(const QString &AStreamId, const Stanza &AResponce, const QString &AMethodNS) {
-    return false;
-}
-
 bool Session::fileStreamRequest(int AOrder, const QString &AStreamId, const Stanza &ARequest, const QList<QString> &AMethods)
 {
     if (AStreamId == FStreamId)
@@ -176,8 +168,8 @@ void Session::onStreamStateChanged()
         if (stream->streamState() == IFileStream::Finished)
         {
             QFile file(stream->fileName());
+            QString fileName = QFileInfo(file).fileName();
             if (file.exists()) {
-                QString fileName = QFileInfo(file).fileName();
                 QString fileNewPath = FCurrentDirectory + QDir::separator() + fileName;
                 if (file.rename(fileNewPath))
                     send("File '" + fileName + "' saved on remote PC.\n");

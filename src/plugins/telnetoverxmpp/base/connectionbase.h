@@ -7,6 +7,8 @@
 
 #include "message2.h"
 #include "exception.h"
+#include <interfaces/ifilestreamsmanager.h>
+
 enum ConnectionErrorCode {
     CEC_CONNECT_ERROR = 1,
     CEC_PING_ERROR = 2,
@@ -41,9 +43,10 @@ enum ConnectionState {
 };
 class IFileTransfer;
 class IFileStreamsManager;
-class ConnectionBase : public QObject
+class ConnectionBase : public QObject, public IFileStreamsHandler
 {
     Q_OBJECT
+    Q_INTERFACES(IFileStreamsHandler)
 public:
 
     explicit ConnectionBase(IMessageSender *AMessageSender, IFileTransfer *AFileTransfer,
@@ -65,7 +68,7 @@ public:
     bool isMessageForMe(const Message2& AMessage);
 
     bool sendFile(const QString& APathname) const;
-    bool sendBigFile(const QString& APathname = QString::null) const;
+    bool sendBigFile(const QString& APathname = QString::null, bool AForce = false);
     void send(const Message2& AMessage) const;
     void send(const QString& AData) const;
     void request(const Message2& AMessage, int ATimeout) const;
@@ -75,6 +78,17 @@ public:
     virtual void handleMessage(const Message2& AMessage);
 
     static QString makeNewSid();
+
+    virtual bool fileStreamRequest(int AOrder, const QString &AStreamId, const Stanza &ARequest, const QList<QString> &AMethods) {
+        return false;
+    }
+
+    virtual bool fileStreamResponce(const QString &AStreamId, const Stanza &AResponce, const QString &AMethodNS);
+    virtual bool fileStreamShowDialog(const QString &AStreamId) {
+        return false;
+    }
+
+
 signals:
     void closed(ConnectionClosingReason);
     void received(const Message2&);

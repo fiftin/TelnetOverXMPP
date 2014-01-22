@@ -26,7 +26,7 @@
 
 class FileMessage;
 
-class Session : public ConnectionBase, public IFileStreamsHandler {
+class Session : public ConnectionBase {
     Q_OBJECT
 
 public:
@@ -55,11 +55,7 @@ public:
     void init();
 
     virtual void handleMessage(const Message2&);
-
     virtual bool fileStreamRequest(int AOrder, const QString &AStreamId, const Stanza &ARequest, const QList<QString> &AMethods);
-    virtual bool fileStreamResponce(const QString &AStreamId, const Stanza &AResponce, const QString &AMethodNS);
-    virtual bool fileStreamShowDialog(const QString &AStreamId);
-
 protected:
     void killProcess();
     virtual void onClosed(ConnectionClosingReason AReason);
