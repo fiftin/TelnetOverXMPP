@@ -100,16 +100,19 @@ bool ConnectionBase::sendFile(const QString &APathname) const
 }
 
 bool ConnectionBase::sendBigFile(const QString &APathname) const {
-    bool result = false;
-    QFile* file = new QFile(APathname);
-    if (file->exists()) {
-        QFileInfo fileInfo(APathname);
-        IFileStream *stream = FFileTransfer->sendFile(this->info().jid, this->info().remoteJid, APathname);
-        this->send(FileMessage::createFile(this->info(), fileInfo.fileName(), stream->streamId(), FMM_FILETRANSFER));
-        result = true;
+    IFileStream *stream = FFileTransfer->sendFile(this->info().jid, this->info().remoteJid, APathname);
+    QString filename;
+    if (APathname != QString::null) {
+        QFile* file = new QFile(APathname);
+        if (file->exists()) {
+            QFileInfo fileInfo(APathname);
+            filename = fileInfo.fileName();
+        }
+        file->close();
     }
-    file->close();
-    return result;
+    this->send(FileMessage::createFile(this->info(), filename, stream->streamId(), FMM_FILETRANSFER));
+
+    return true;
 }
 
 void ConnectionBase::send(const Message2& AMessage) const {

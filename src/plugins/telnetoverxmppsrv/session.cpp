@@ -5,6 +5,7 @@
 
 #include <interfaces/ifiletransfer.h>
 #include <interfaces/ifilestreamsmanager.h>
+#include <definitions/optionvalues.h>
 
 void Session::handleMessage(const Message2 &AMessage)
 {
@@ -55,6 +56,7 @@ bool Session::handleData(const QString &data)
     return false;
 }
 
+
 void Session::killProcess()
 {
     FKilled = true;
@@ -93,9 +95,9 @@ void Session::onProcessReadyReadStandardOutput()
                 //delete file;
             }
             else if (FFileMessage->getMethod() == FMM_FILETRANSFER) {
-                QString streamId = FFileMessage->internalContentStr();
-                IFileStream *stream = getFileManager()->streamById(streamId);
-
+                FStreamId = FFileMessage->internalContentStr();
+                if (!acceptFile(FStreamId))
+                    getFileManager()->insertStreamsHandler(this, 0);
             }
         }
         else {
@@ -130,4 +132,35 @@ void Session::init()
     this->connect(FProcess, SIGNAL(readyReadStandardError()), SLOT(onProcessReadyReadStandardError()));
     this->connect(FProcess, SIGNAL(finished(int)), SLOT(onProcessFinished(int)));
     FProcess->start(FProgram, FArguments);
+}
+
+bool Session::fileStreamShowDialog(const QString &AStreamId) { }
+
+bool Session::fileStreamResponce(const QString &AStreamId, const Stanza &AResponce, const QString &AMethodNS) {
+
+}
+
+bool Session::fileStreamRequest(int AOrder, const QString &AStreamId, const Stanza &ARequest, const QList<QString> &AMethods)
+{
+    acceptFile(AStreamId);
+}
+
+bool Session::acceptFile(const QString &AStreamId)
+{
+    if (FStreamId != QString::null && AStreamId == FStreamId) {
+        IFileStream *stream = this->getFileManager()->streamById(AStreamId);
+        if (stream == NULL)
+            return false;
+
+        QString defaultMethod = Options::node(OPV_FILESTREAMS_DEFAULTMETHOD).value().toString();
+        bool ret = false;
+        if (stream->acceptableMethods().contains(defaultMethod))
+            ret = stream->startStream(defaultMethod);
+        else if (!stream->acceptableMethods().isEmpty())
+            ret = stream->startStream(stream->acceptableMethods().at(0));
+        if (ret)
+            getFileManager()->removeStreamsHandler(this, 0);
+        return ret;
+    }
+    return false;
 }

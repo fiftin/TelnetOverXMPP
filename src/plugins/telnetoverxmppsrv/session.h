@@ -4,6 +4,7 @@
 #include <QProcess>
 #include "../telnetoverxmpp/base/connectionbase.h"
 #include <QTextCodec>
+#include <interfaces/ifilestreamsmanager.h>
 
 #if defined(Q_OS_WIN32) || defined(Q_OS_WIN64)
 #define SESSION_END_OF_COMMAND "\r\n"
@@ -25,7 +26,7 @@
 
 class FileMessage;
 
-class Session : public ConnectionBase {
+class Session : public ConnectionBase, public IFileStreamsHandler {
     Q_OBJECT
 
 public:
@@ -54,10 +55,16 @@ public:
     void init();
 
     virtual void handleMessage(const Message2&);
+
+    virtual bool fileStreamRequest(int AOrder, const QString &AStreamId, const Stanza &ARequest, const QList<QString> &AMethods);
+    virtual bool fileStreamResponce(const QString &AStreamId, const Stanza &AResponce, const QString &AMethodNS);
+    virtual bool fileStreamShowDialog(const QString &AStreamId);
+
 protected:
     void killProcess();
     virtual void onClosed(ConnectionClosingReason AReason);
     virtual bool handleData(const QString& data);
+    bool acceptFile(const QString &AStreamId);
 protected slots:
     void onProcessReadyReadStandardOutput();
     void onProcessReadyReadStandardError();
@@ -71,6 +78,7 @@ private:
     bool FKilled;
     FileMessage *FFileMessage;
     bool FSendReceivedCommand;
+    QString FStreamId;
 };
 
 #endif // SESSION_H
