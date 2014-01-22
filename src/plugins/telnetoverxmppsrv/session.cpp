@@ -177,14 +177,15 @@ void Session::onStreamStateChanged()
         {
             QFile file(stream->fileName());
             if (file.exists()) {
-                QString fileNewPath = FCurrentDirectory + QDir::separator() + QFileInfo(file).fileName();
+                QString fileName = QFileInfo(file).fileName();
+                QString fileNewPath = FCurrentDirectory + QDir::separator() + fileName;
                 if (file.rename(fileNewPath))
-                    send("File '" + FFileMessage->fileName() + "' saved on remote PC.\n");
+                    send("File '" + fileName + "' saved on remote PC.\n");
                 else
-                    send("File '" + FFileMessage->fileName() + "' <b>DO NOT</b> saved on remote PC.\n");
+                    send("File '" + fileName + "' <b>DO NOT</b> saved on remote PC.\n");
             }
             else {
-                send("File '" + FFileMessage->fileName() + "' <b>DO NOT</b> saved on remote PC.\n");
+                send("File '" + fileName + "' <b>DO NOT</b> saved on remote PC.\n");
 
             }
             FCurrentDirectory = "";
