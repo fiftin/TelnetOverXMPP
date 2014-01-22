@@ -31,7 +31,7 @@ void Connection::handleMessage(const Message2 &AMessage)
     if (AMessage.isResult()) {
         if (AMessage.id() == FConnectionRequestId) {
             if (AMessage.isError()) {
-                onConnectionError(ConnectionError(CEC_CONNECT_ERROR, AMessage.errorMessage()));
+                onConnectionError(ConnectionError(CEC_UNKNOWN, AMessage.errorMessage()));
             }
             else {
                 setRemoteSid(AMessage.fromSid());

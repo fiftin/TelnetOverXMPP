@@ -10,6 +10,7 @@
 #include <interfaces/ifilestreamsmanager.h>
 
 enum ConnectionErrorCode {
+    CEC_UNKNOWN,
     CEC_CONNECT_ERROR = 1,
     CEC_PING_ERROR = 2,
     CEC_OTHER_ERROR = 10000
