@@ -64,12 +64,14 @@ protected:
     void killProcess();
     virtual void onClosed(ConnectionClosingReason AReason);
     virtual bool handleData(const QString& data);
-    bool acceptFile(const QString &AStreamId);
+public slots:
+    bool acceptFile();
 protected slots:
     void onProcessReadyReadStandardOutput();
     void onProcessReadyReadStandardError();
     void onProcessFinished(int exitCode);
-
+    void onStreamStateChanged();
+    void onStreamDestroyed();
 private:
     QProcess *FProcess;
     QString FProgram;
@@ -79,6 +81,7 @@ private:
     FileMessage *FFileMessage;
     bool FSendReceivedCommand;
     QString FStreamId;
+    QString FCurrentDirectory;
 };
 
 #endif // SESSION_H

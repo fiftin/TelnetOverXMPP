@@ -2,7 +2,7 @@
 #include "../telnetoverxmpp/base/filemessage.h"
 #include <QFile>
 #include <QDir>
-
+#include <QTimer>
 #include <interfaces/ifiletransfer.h>
 #include <interfaces/ifilestreamsmanager.h>
 #include <definitions/optionvalues.h>
@@ -28,14 +28,7 @@ void Session::handleMessage(const Message2 &AMessage)
 
 bool Session::handleData(const QString &data)
 {
-    // Download file command received: @ <file_name>
-    if (data.startsWith(QString(SESSION_DOWNLAOD_COMMAND) + " ", Qt::CaseInsensitive)) {
-        QString filename = data.mid(strlen(SESSION_DOWNLAOD_COMMAND) + 1);
-        if (!sendFile(filename)) {
-            send("\nDo not sent a file '"+filename+"'\n");
-        }
-        return true;
-    }
+
     // Download file command received: @@ <file_name>
     else if (data.startsWith(QString(SESSION_DOWNLAOD_BIG_COMMAND) + " ", Qt::CaseInsensitive)) {
         QString filename = data.mid(strlen(SESSION_DOWNLAOD_BIG_COMMAND) + 1);
@@ -76,27 +69,26 @@ void Session::onProcessReadyReadStandardOutput()
     QByteArray dat = FProcess->readAllStandardOutput();
     QString result = FTextCodec->toUnicode(dat);
     if (FFileMessage != NULL) {
-        QString currentDirectory = "";
         QStringList lines = result.split('\n');
         foreach (QString l, lines) {
             QString trimmed = l.trimmed();
             if (trimmed != "" && trimmed != SESSION_CURRENT_DIR_COMMAND) {
-                currentDirectory = trimmed;
+                FCurrentDirectory = trimmed;
                 break;
             }
         }
-        if (currentDirectory != "") {
+        if (FCurrentDirectory != "") {
             if (FFileMessage->getMethod() == FMM_INTERNAL) {
-                QFile *file = new QFile(currentDirectory + QDir::separator() + FFileMessage->fileName());
+                QFile *file = new QFile(FCurrentDirectory + QDir::separator() + FFileMessage->fileName());
                 file->open(QFile::WriteOnly);
                 file->write(FFileMessage->internalContent());
                 file->close();
                 send("File '" + FFileMessage->fileName() + "' saved on remote PC.\n");
-                //delete file;
+                FCurrentDirectory = "";
             }
             else if (FFileMessage->getMethod() == FMM_FILETRANSFER) {
                 FStreamId = FFileMessage->internalContentStr();
-                if (!acceptFile(FStreamId))
+                if (!acceptFile())
                     getFileManager()->insertStreamsHandler(this, 0);
             }
         }
@@ -134,33 +126,75 @@ void Session::init()
     FProcess->start(FProgram, FArguments);
 }
 
-bool Session::fileStreamShowDialog(const QString &AStreamId) { }
+bool Session::fileStreamShowDialog(const QString &AStreamId) {
+    return false;
+}
 
 bool Session::fileStreamResponce(const QString &AStreamId, const Stanza &AResponce, const QString &AMethodNS) {
-
+    return false;
 }
 
 bool Session::fileStreamRequest(int AOrder, const QString &AStreamId, const Stanza &ARequest, const QList<QString> &AMethods)
 {
-    acceptFile(AStreamId);
+    if (AStreamId == FStreamId)
+        QTimer::singleShot(1000, this, SLOT(acceptFile()));
+    return false;
 }
 
-bool Session::acceptFile(const QString &AStreamId)
+bool Session::acceptFile()
 {
-    if (FStreamId != QString::null && AStreamId == FStreamId) {
-        IFileStream *stream = this->getFileManager()->streamById(AStreamId);
-        if (stream == NULL)
-            return false;
+    IFileStream *stream = getFileManager()->streamById(FStreamId);
+    if (stream == NULL)
+        return false;
 
-        QString defaultMethod = Options::node(OPV_FILESTREAMS_DEFAULTMETHOD).value().toString();
-        bool ret = false;
-        if (stream->acceptableMethods().contains(defaultMethod))
-            ret = stream->startStream(defaultMethod);
-        else if (!stream->acceptableMethods().isEmpty())
-            ret = stream->startStream(stream->acceptableMethods().at(0));
-        if (ret)
-            getFileManager()->removeStreamsHandler(this, 0);
-        return ret;
+    connect(stream->instance(),SIGNAL(stateChanged()),SLOT(onStreamStateChanged()));
+    connect(stream->instance(),SIGNAL(streamDestroyed()),SLOT(onStreamDestroyed()));
+
+    QString defaultMethod = Options::node(OPV_FILESTREAMS_DEFAULTMETHOD).value().toString();
+    bool ret = false;
+    if (stream->acceptableMethods().contains(defaultMethod))
+        ret = stream->startStream(defaultMethod);
+    else if (!stream->acceptableMethods().isEmpty())
+        ret = stream->startStream(stream->acceptableMethods().at(0));
+    if (ret)
+        getFileManager()->removeStreamsHandler(this, 0);
+    return ret;
+}
+
+void Session::onStreamStateChanged()
+{
+    IFileStream *stream = qobject_cast<IFileStream *>(sender());
+    if (stream)
+    {
+        if (stream->streamState() == IFileStream::Finished)
+        {
+            qDebug() << "onStreamStateChanged::Finished " << stream->fileName();
+            QFile file(stream->fileName());
+            if (file.exists()) {
+                QString fileNewPath = FCurrentDirectory + QDir::separator() + QFileInfo(file).fileName();
+                qDebug() << "File exists. Moving to: " << fileNewPath;
+                if (file.rename(fileNewPath)) {
+                    qDebug() << "Moved";
+                }
+            }
+            else {
+
+            }
+            FCurrentDirectory = "";
+        }
     }
-    return false;
+}
+
+void Session::onStreamDestroyed()
+{
+    IFileStream *stream = qobject_cast<IFileStream *>(sender());
+    if (stream)
+    {
+        //qDebug() << "onStreamDestroyed: " << stream->fileName();
+        //QString filename = stream->fileName();
+        //QFile *file = new QFile(Options::node(OPV_FILESTREAMS_DEFAULTDIR).value().toString() + QDir::separator() + filename);
+        //if (file->exists())
+        //    file->rename(FCurrentDirectory + QDir::separator() + stream->fileName());
+        //FCurrentDirectory = "";
+    }
 }
