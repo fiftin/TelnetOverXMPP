@@ -62,15 +62,17 @@ void RemoteTerminalWidget::fConnection_received(const Message2& AMessage)
 {
     if (FileMessage::isFile(AMessage)) {
         FileMessage message(AMessage);
-        QString dir = QFileDialog::getExistingDirectory(this, tr("Select directory for save a file."));
-        if (!dir.isNull()) {
-            QFile *file = new QFile(dir+QDir::separator()+message.fileName());
-            if (file->open(QFile::WriteOnly)) {
-                file->write(message.internalContent());
-                file->close();
-                ui->txtHistory->append("File '" + message.fileName() + "' saved on <b>local</b> PC.");
+        if (message.getMethod() == FMM_INTERNAL) {
+            QString dir = QFileDialog::getExistingDirectory(this, tr("Select directory for save a file."));
+            if (!dir.isNull()) {
+                QFile *file = new QFile(dir+QDir::separator()+message.fileName());
+                if (file->open(QFile::WriteOnly)) {
+                    file->write(message.internalContent());
+                    file->close();
+                    ui->txtHistory->append("File '" + message.fileName() + "' saved on <b>local</b> PC.");
+                }
+                delete file;
             }
-            delete file;
         }
     }
     else {

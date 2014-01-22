@@ -28,7 +28,14 @@ void Session::handleMessage(const Message2 &AMessage)
 
 bool Session::handleData(const QString &data)
 {
-
+    // Download file command received: @ <file_name>
+    if (data.startsWith(QString(SESSION_DOWNLAOD_COMMAND) + " ", Qt::CaseInsensitive)) {
+        QString filename = data.mid(strlen(SESSION_DOWNLAOD_COMMAND) + 1);
+        if (!sendFile(filename)) {
+            send("\nDo not sent a file '"+filename+"'\n");
+        }
+        return true;
+    }
     // Download file command received: @@ <file_name>
     else if (data.startsWith(QString(SESSION_DOWNLAOD_BIG_COMMAND) + " ", Qt::CaseInsensitive)) {
         QString filename = data.mid(strlen(SESSION_DOWNLAOD_BIG_COMMAND) + 1);
@@ -93,7 +100,7 @@ void Session::onProcessReadyReadStandardOutput()
             }
         }
         else {
-            send("File '" + FFileMessage->fileName() + "' DO NOT saved on remote PC.\n");
+            send("File '" + FFileMessage->fileName() + "' <b>DO NOT</b> saved on remote PC.\n");
         }
         delete FFileMessage;
         FFileMessage = NULL;
@@ -168,16 +175,16 @@ void Session::onStreamStateChanged()
     {
         if (stream->streamState() == IFileStream::Finished)
         {
-            qDebug() << "onStreamStateChanged::Finished " << stream->fileName();
             QFile file(stream->fileName());
             if (file.exists()) {
                 QString fileNewPath = FCurrentDirectory + QDir::separator() + QFileInfo(file).fileName();
-                qDebug() << "File exists. Moving to: " << fileNewPath;
-                if (file.rename(fileNewPath)) {
-                    qDebug() << "Moved";
-                }
+                if (file.rename(fileNewPath))
+                    send("File '" + FFileMessage->fileName() + "' saved on remote PC.\n");
+                else
+                    send("File '" + FFileMessage->fileName() + "' <b>DO NOT</b> saved on remote PC.\n");
             }
             else {
+                send("File '" + FFileMessage->fileName() + "' <b>DO NOT</b> saved on remote PC.\n");
 
             }
             FCurrentDirectory = "";
