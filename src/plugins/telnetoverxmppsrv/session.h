@@ -2,7 +2,7 @@
 #define SESSION_H
 
 #include <QProcess>
-#include "base/connectionbase.h"
+#include "../telnetoverxmpp/base/connectionbase.h"
 #include <QTextCodec>
 
 #if defined(Q_OS_WIN32) || defined(Q_OS_WIN64)
@@ -29,11 +29,12 @@ class Session : public ConnectionBase {
     Q_OBJECT
 
 public:
-    Session(IMessageSender *AMessageSender, const QString& ARemoteSid,
+    Session(IMessageSender *AMessageSender,  IFileTransfer *AFileTransfer,
+            IFileStreamsManager *AFileManager, const QString& ARemoteSid,
             const Jid& AJid, const Jid& ARemoteJid,
             const QString &AProgram, const QStringList &AArguments=QStringList(),
             QObject *parent = 0)
-        : ConnectionBase(AMessageSender, makeNewSid(), ARemoteSid, AJid, ARemoteJid, parent),
+        : ConnectionBase(AMessageSender, AFileTransfer, AFileManager, makeNewSid(), ARemoteSid, AJid, ARemoteJid, parent),
           FProcess(NULL),
           FProgram(AProgram),
           FArguments(AArguments),

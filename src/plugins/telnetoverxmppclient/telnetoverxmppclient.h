@@ -13,7 +13,7 @@
 #include <interfaces/ifiletransfer.h>
 
 #include "remoteterminaldialog.h"
-#include "base/telnetoverxmppbase.h"
+#include "../telnetoverxmpp/base/telnetoverxmppbase.h"
 
 class TelnetOverXmppClient : public QObject, public IPlugin,
         public ITelnetOverXmppClient, public IStanzaHandler,

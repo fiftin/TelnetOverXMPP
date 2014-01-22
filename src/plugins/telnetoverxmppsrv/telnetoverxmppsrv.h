@@ -7,9 +7,11 @@
 #include <interfaces/iservicediscovery.h>
 #include <interfaces/irostersview.h>
 #include <interfaces/istanzaprocessor.h>
+#include <interfaces/ifilestreamsmanager.h>
+#include <interfaces/ifiletransfer.h>
 
 #include "itelnetoverxmppsrv.h"
-#include "base/telnetoverxmppbase.h"
+#include "../telnetoverxmpp/base/telnetoverxmppbase.h"
 #include "session.h"
 
 #if defined(Q_OS_WIN32) || defined(Q_OS_WIN64)
@@ -39,6 +41,8 @@ private:
     IServiceDiscovery *FServiceDiscovery;
     IStanzaProcessor *FStanzaProcessor;
     IMessageSender *FMessageSender;
+    IFileStreamsManager *FFileManager;
+    IFileTransfer *FFileTransfer;
 };
 
 #endif // TELNETOVERXMPPSRV_H

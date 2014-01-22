@@ -1,8 +1,13 @@
 #include "connection.h"
 
+#include <interfaces/ifiletransfer.h>
+#include <interfaces/ifilestreamsmanager.h>
 
-Connection::Connection(IMessageSender* AMessageSender, const Jid& AJid, const Jid& ARemoteJid, bool AOpen)
-    : ConnectionBase(AMessageSender, makeNewSid(), "", AJid, ARemoteJid)
+
+Connection::Connection(IMessageSender* AMessageSender, IFileTransfer *AFileTransfer,
+                       IFileStreamsManager *AFileManager,
+                       const Jid& AJid, const Jid& ARemoteJid, bool AOpen)
+    : ConnectionBase(AMessageSender, AFileTransfer, AFileManager, makeNewSid(), "", AJid, ARemoteJid)
 {
     if (AOpen)
         open();

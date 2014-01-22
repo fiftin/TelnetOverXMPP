@@ -2,7 +2,7 @@
 #define CONNECTION_H
 
 
-#include "base/connectionbase.h"
+#include "../telnetoverxmpp/base/connectionbase.h"
 
 
 class Connection : public ConnectionBase
@@ -10,10 +10,10 @@ class Connection : public ConnectionBase
     Q_OBJECT
 public:
 
-    Connection(IMessageSender* AMessageSender, const Jid& AJid, const Jid& ARemoteJid, bool AOpen=true);
-    ~Connection() {
-        qDebug() << "~Connection()";
-    }
+    Connection(IMessageSender* AMessageSender, IFileTransfer *AFileTransfer,
+               IFileStreamsManager *AFileManager, const Jid& AJid, const Jid& ARemoteJid, bool AOpen=true);
+
+    ~Connection() { }
 
     void open();
 

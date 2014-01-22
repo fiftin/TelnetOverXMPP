@@ -1,7 +1,11 @@
 #include "session.h"
-#include "base/filemessage.h"
+#include "../telnetoverxmpp/base/filemessage.h"
 #include <QFile>
 #include <QDir>
+
+#include <interfaces/ifiletransfer.h>
+#include <interfaces/ifilestreamsmanager.h>
+
 void Session::handleMessage(const Message2 &AMessage)
 {
     if (FileMessage::isFile(AMessage)) {

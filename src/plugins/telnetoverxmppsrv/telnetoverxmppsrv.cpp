@@ -1,5 +1,5 @@
 #include "telnetoverxmppsrv.h"
-#include "base/exception.h"
+#include "../telnetoverxmpp/base/exception.h"
 
 #include <definitions/resources.h>
 TelnetOverXmppSrv::TelnetOverXmppSrv(QObject *parent) :
@@ -29,6 +29,17 @@ bool TelnetOverXmppSrv::initConnections(IPluginManager *APluginManager, int &AIn
         FStanzaProcessor->insertStanzaHandle(makeStanzaHandle(this));
         FMessageSender = new OverStanzaProcessorMessageSender(FStanzaProcessor, NULL);
     }
+
+    plugin = APluginManager->pluginInterface("IFileStreamsManager").value(0,NULL);
+    if (plugin) {
+        FFileManager = qobject_cast<IFileStreamsManager *>(plugin->instance());
+    }
+
+    plugin = APluginManager->pluginInterface("IFileTransfer").value(0,NULL);
+    if (plugin) {
+        FFileTransfer = qobject_cast<IFileTransfer *>(plugin->instance());
+    }
+
     return true;
 }
 
@@ -79,7 +90,7 @@ bool TelnetOverXmppSrv::stanzaReadWrite(int AHandleId, const Jid &AJid, Stanza &
                     foreach (ConnectionBase* c, closedConnections) {
                         delete c;
                     }
-                    session = new Session(FMessageSender, message.fromSid(), AJid, message.from(), TERMINAL_PROGRAM_NAME);
+                    session = new Session(FMessageSender, FFileTransfer, FFileManager, message.fromSid(), AJid, message.from(), TERMINAL_PROGRAM_NAME);
                     addConnection(session);
                     connect(session,
                             SIGNAL(closed(ConnectionClosingReason)),

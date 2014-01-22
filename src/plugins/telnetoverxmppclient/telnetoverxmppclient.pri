@@ -5,6 +5,11 @@ HEADERS += \
     ../telnetoverxmpp/base/connectionbase.h \
     ../telnetoverxmpp/base/message2.h \
     ../telnetoverxmpp/base/filemessage.h \
+#    base/telnetoverxmppbase.h \
+#    base/connectioninfo.h \
+#    base/connectionbase.h \
+#    base/message2.h \
+#    base/filemessage.h \
     connection.h \
     itelnetoverxmppclient.h \
     telnetoverxmppclient.h \
@@ -18,6 +23,10 @@ SOURCES += \
     ../telnetoverxmpp/base/connectionbase.cpp \
     ../telnetoverxmpp/base/message2.cpp\
     ../telnetoverxmpp/base/filemessage.cpp \
+#    base/telnetoverxmppbase.cpp \
+#    base/connectionbase.cpp \
+#    base/message2.cpp\
+#    base/filemessage.cpp \
     connection.cpp \
     telnetoverxmppclient.cpp \
     remoteterminalwidget.cpp \

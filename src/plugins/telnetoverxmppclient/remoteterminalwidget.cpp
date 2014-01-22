@@ -6,7 +6,7 @@
 #include <QScrollBar>
 #include <QMenu>
 #include <QFileDialog>
-#include "base/filemessage.h"
+#include "../telnetoverxmpp/base/filemessage.h"
 RemoteTerminalWidget::RemoteTerminalWidget(Connection* AConnection, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::RemoteTerminalWidget),

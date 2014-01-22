@@ -138,6 +138,8 @@ void TelnetOverXmppClient::onConnectToTerminalByAction(bool)
         FTerminalDialog = new RemoteTerminalDialog();
     Action *action = qobject_cast<Action *>(sender());
     Connection *connection = new Connection(FMessageSender,
+                                            FFileTransfer,
+                                            FFileManager,
                                             action->data(ADR_STREAM_JID).toString(),
                                             action->data(ADR_REMOTE_JID).toString(), false);
     FTerminalDialog->addTerminal(connection);
