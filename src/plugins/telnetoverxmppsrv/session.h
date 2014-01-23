@@ -15,6 +15,7 @@
 #define SESSION_END_OF_COMMAND "\n"
 #define SESSION_ENCODING_NAME "UTF-8"
 #define SESSION_CURRENT_DIR_COMMAND "pwd"
+#define SESSION_CURRENT_DIR_COMMAND_INTERNAL "__pwd__3820437_37781332_e73s36www7273932"
 #define SESSION_PATH_SEPARATOR "/"
 #endif
 
@@ -69,6 +70,7 @@ protected slots:
     void onProcessFinished(int exitCode);
     void onStreamStateChanged();
     void onStreamDestroyed();
+    void onStarted();
 private:
     QProcess *FProcess;
     QString FProgram;

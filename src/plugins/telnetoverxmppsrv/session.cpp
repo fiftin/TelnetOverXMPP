@@ -82,7 +82,7 @@ void Session::onProcessReadyReadStandardOutput()
 {
     QByteArray dat = FProcess->readAllStandardOutput();
     QString result = FTextCodec->toUnicode(dat);
-    if (FLastWrittenCommand == SESSION_CURRENT_DIR_COMMAND) {
+    if (FLastWrittenCommand == SESSION_CURRENT_DIR_COMMAND_INTERNAL) {
         QStringList lines = result.split('\n');
         foreach (QString l, lines) {
             QString trimmed = l.trimmed();
@@ -116,7 +116,7 @@ void Session::onProcessReadyReadStandardOutput()
         delete FFileMessage;
         FFileMessage = NULL;
     }
-    else {
+    else if (FLastWrittenCommand != SESSION_CURRENT_DIR_COMMAND_INTERNAL) {
         send(result);
     }
 }
@@ -138,13 +138,15 @@ void Session::onProcessFinished(int exitCode)
 void Session::writePWD()
 {
     QByteArray dat = FTextCodec->fromUnicode(QString(SESSION_CURRENT_DIR_COMMAND) + SESSION_END_OF_COMMAND);
-    FLastWrittenCommand = SESSION_CURRENT_DIR_COMMAND;
+    FLastWrittenCommand = SESSION_CURRENT_DIR_COMMAND_INTERNAL;
     FProcess->write(dat);
 }
 
 void Session::init()
 {
     FProcess = new QProcess();
+
+    this->connect(FProcess, SIGNAL(started()), SLOT(onStarted()));
     this->connect(FProcess, SIGNAL(readyReadStandardOutput()), SLOT(onProcessReadyReadStandardOutput()));
     this->connect(FProcess, SIGNAL(readyReadStandardError()), SLOT(onProcessReadyReadStandardError()));
     this->connect(FProcess, SIGNAL(finished(int)), SLOT(onProcessFinished(int)));
@@ -216,4 +218,10 @@ void Session::onStreamDestroyed()
         //FCurrentDirectory = "";
     }
 }
+
+void Session::onStarted()
+{
+    writePWD();
+}
+
 
