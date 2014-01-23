@@ -8,7 +8,7 @@
 #include <QFileDialog>
 #include "../telnetoverxmpp/base/filemessage.h"
 #include "../telnetoverxmpp/base/commandmessage.h"
-
+#include "../telnetoverxmpp/base/pwdmessage.h"
 RemoteTerminalWidget::RemoteTerminalWidget(Connection* AConnection, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::RemoteTerminalWidget),
@@ -76,6 +76,12 @@ void RemoteTerminalWidget::fConnection_received(const Message2& AMessage)
                 delete file;
             }
         }
+    }
+    else if (PWDMessage::isPWD(AMessage)) {
+        QString prompt = AMessage.data();
+        if (prompt.length() > 30)
+            prompt = prompt.mid(0, 30);
+        ui->promptLabel->setText(prompt + ">");
     }
     else {
         QTextCursor cur = ui->txtHistory->textCursor();
