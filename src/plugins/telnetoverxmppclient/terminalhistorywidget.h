@@ -9,7 +9,7 @@ class TerminalHistoryWidget : public QTextEdit
     Q_OBJECT
 public:
     explicit TerminalHistoryWidget(QWidget *parent = 0);
-    virtual ~TerminalHistoryWidget() { qDebug() << "~TerminalHistoryWidget()"; }
+    virtual ~TerminalHistoryWidget() { }
 protected:
     virtual void keyPressEvent(QKeyEvent *evt);
 signals:

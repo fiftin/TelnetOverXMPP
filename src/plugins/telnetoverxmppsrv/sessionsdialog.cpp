@@ -36,7 +36,7 @@ void SessionsDialog::showDialog()
     }
 }
 
-void SessionsDialog::activated(const QModelIndex &index)
+void SessionsDialog::onItemActived(const QModelIndex &index)
 {
     QVariant value = index.data(Qt::UserRole+1);
     QString sid = value.toString();

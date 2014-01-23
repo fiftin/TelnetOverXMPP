@@ -18,7 +18,7 @@ public:
     ~SessionsDialog();
     void showDialog();
 private slots:
-    void activated(const QModelIndex &index);
+    void onItemActived(const QModelIndex &index);
 
 private:
     Ui::SessionsDialog *ui;

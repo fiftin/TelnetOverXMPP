@@ -13,7 +13,7 @@
 #define SESSION_PATH_SEPARATOR "\\"
 #define SESSION_INVITE_STRING ">"
 #define SESSION_PWD_PATTERN ""
-//#define SESSION_PWD_PATTERN "^[a-zA-Z]:(\\[^!#*?\\\`\'\"/]*)+$"
+#define SESSION_SEND_RECEIVED_COMMAND false
 #define SESSION_CASE_SESATIVITY false
 #else
 #define SESSION_END_OF_COMMAND "\n"
@@ -22,13 +22,13 @@
 #define SESSION_PATH_SEPARATOR "/"
 #define SESSION_INVITE_STRING "$"
 #define SESSION_CASE_SESATIVITY true
-//#define SESSION_PWD_PATTERN "^(/[^!#*?\\\`\'\"/]*)+$"
+#define SESSION_SEND_RECEIVED_COMMAND true
 #endif
 #define SESSION_CD_COMMAND "cd"
 #define SESSION_CURRENT_DIR_COMMAND_INTERNAL "__pwd__3820437_37781332_e73s36www7273932"
-#define SESSION_DOWNLAOD_COMMAND "__dls__"
-#define SESSION_DOWNLAOD_BIG_COMMAND "__dlb__"
-#define SESSION_RUN_COMMAND "__run__"
+#define SESSION_DOWNLAOD_COMMAND "dl"
+#define SESSION_DOWNLAOD_BIG_COMMAND "dlb"
+//#define SESSION_RUN_COMMAND "__run__"
 
 class FileMessage;
 
@@ -48,8 +48,7 @@ public:
           FTextCodec(QTextCodec::codecForName(SESSION_ENCODING_NAME)),
           FKilled(false),
           FFileMessage(NULL),
-          FSendReceivedCommand(true)
-          //FPWDPattern(SESSION_PWD_PATTERN)
+          FSendReceivedCommand(SESSION_SEND_RECEIVED_COMMAND)
     {
         onConnected();
         init();

@@ -58,14 +58,14 @@ bool Session::handleData(const QString &data)
         return true;
     }
     // Run other program - NOT WORKS
-    else if (data.startsWith(QString(SESSION_RUN_COMMAND) + " ", Qt::CaseInsensitive)) {
-        FKilled = true;
-        FProcess->close();
-        FProgram = data.mid(strlen(SESSION_RUN_COMMAND) + 1);
-        FArguments.clear();
-        init();
-        return true;
-    }
+    //else if (data.startsWith(QString(SESSION_RUN_COMMAND) + " ", Qt::CaseInsensitive)) {
+    //    FKilled = true;
+    //    FProcess->close();
+    //    FProgram = data.mid(strlen(SESSION_RUN_COMMAND) + 1);
+    //    FArguments.clear();
+    //    init();
+    //    return true;
+    //}
     return false;
 }
 

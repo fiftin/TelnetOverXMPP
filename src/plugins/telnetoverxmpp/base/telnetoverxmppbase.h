@@ -38,7 +38,6 @@ public:
     }
 
     ConnectionBase* getConnection(const QString& ASid) const {
-        qDebug() << "value";
         return FConnections.value(ASid, NULL);
     }
 
