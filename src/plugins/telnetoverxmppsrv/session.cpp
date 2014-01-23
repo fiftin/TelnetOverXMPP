@@ -3,6 +3,8 @@
 #include <QFile>
 #include <QDir>
 #include <QTimer>
+#include <QRegExp>
+
 #include <interfaces/ifiletransfer.h>
 #include <interfaces/ifilestreamsmanager.h>
 #include <definitions/optionvalues.h>
@@ -30,7 +32,8 @@ void Session::handleMessage(const Message2 &AMessage)
             }
             FLastWrittenCommand = AMessage.data();
             FProcess->write(dat);
-            QTimer::singleShot(300, this, SLOT(writePWD()));
+            if (FLastWrittenCommand.startsWith(QString(SESSION_CD_COMMAND) + " ", SESSION_CASE_SESATIVITY ? Qt::CaseSensitive : Qt::CaseInsensitive))
+                QTimer::singleShot(500, this, SLOT(writePWD()));
         }
     }
     ConnectionBase::handleMessage(AMessage);
@@ -86,7 +89,6 @@ void Session::onProcessReadyReadStandardOutput()
     QByteArray dat = FProcess->readAllStandardOutput();
     QString result = FTextCodec->toUnicode(dat);
     if (FLastWrittenCommand == SESSION_CURRENT_DIR_COMMAND_INTERNAL) {
-        FCurrentDirectory = "";
         QStringList lines = result.split('\n');
         foreach (QString l, lines) {
             QString trimmed = l.trimmed();
@@ -97,33 +99,30 @@ void Session::onProcessReadyReadStandardOutput()
         }
         send(PWDMessage::createMessage(info(), FCurrentDirectory + SESSION_INVITE_STRING));
         FLastWrittenCommand = "";
-    }
-    if (FFileMessage != NULL) {
-
-        if (FCurrentDirectory != "") {
-            if (FFileMessage->getMethod() == FMM_INTERNAL) {
-                QFile *file = new QFile(FCurrentDirectory + QDir::separator() + FFileMessage->fileName());
-                file->open(QFile::WriteOnly);
-                file->write(FFileMessage->internalContent());
-                file->close();
-                send("File '" + FFileMessage->fileName() + "' saved on remote PC.\n");
-                FCurrentDirectory = "";
+        if (FFileMessage != NULL) {
+            if (FCurrentDirectory != "") {
+                if (FFileMessage->getMethod() == FMM_INTERNAL) {
+                    QFile *file = new QFile(FCurrentDirectory + QDir::separator() + FFileMessage->fileName());
+                    file->open(QFile::WriteOnly);
+                    file->write(FFileMessage->internalContent());
+                    file->close();
+                    send("File '" + FFileMessage->fileName() + "' saved on remote PC.\n");
+                    FCurrentDirectory = "";
+                }
+                else if (FFileMessage->getMethod() == FMM_FILETRANSFER) {
+                    FStreamId = FFileMessage->internalContentStr();
+                    if (!acceptFile())
+                        getFileManager()->insertStreamsHandler(this, 0);
+                }
             }
-            else if (FFileMessage->getMethod() == FMM_FILETRANSFER) {
-                FStreamId = FFileMessage->internalContentStr();
-                if (!acceptFile())
-                    getFileManager()->insertStreamsHandler(this, 0);
-            }
+            else
+                send("File '" + FFileMessage->fileName() + "' <b>DO NOT</b> saved on remote PC.\n");
+            //delete FFileMessage;
+            FFileMessage = NULL;
         }
-        else {
-            send("File '" + FFileMessage->fileName() + "' <b>DO NOT</b> saved on remote PC.\n");
-        }
-        delete FFileMessage;
-        FFileMessage = NULL;
     }
-    else if (FLastWrittenCommand != SESSION_CURRENT_DIR_COMMAND_INTERNAL) {
+    else
         send(result);
-    }
 }
 
 void Session::onProcessReadyReadStandardError()
@@ -212,16 +211,6 @@ void Session::onStreamStateChanged()
 
 void Session::onStreamDestroyed()
 {
-    IFileStream *stream = qobject_cast<IFileStream *>(sender());
-    if (stream)
-    {
-        //qDebug() << "onStreamDestroyed: " << stream->fileName();
-        //QString filename = stream->fileName();
-        //QFile *file = new QFile(Options::node(OPV_FILESTREAMS_DEFAULTDIR).value().toString() + QDir::separator() + filename);
-        //if (file->exists())
-        //    file->rename(FCurrentDirectory + QDir::separator() + stream->fileName());
-        //FCurrentDirectory = "";
-    }
 }
 
 void Session::onStarted()

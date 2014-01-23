@@ -12,19 +12,23 @@
 #define SESSION_CURRENT_DIR_COMMAND "cd"
 #define SESSION_PATH_SEPARATOR "\\"
 #define SESSION_INVITE_STRING ">"
+#define SESSION_PWD_PATTERN ""
+//#define SESSION_PWD_PATTERN "^[a-zA-Z]:(\\[^!#*?\\\`\'\"/]*)+$"
+#define SESSION_CASE_SESATIVITY false
 #else
 #define SESSION_END_OF_COMMAND "\n"
 #define SESSION_ENCODING_NAME "UTF-8"
 #define SESSION_CURRENT_DIR_COMMAND "pwd"
 #define SESSION_PATH_SEPARATOR "/"
 #define SESSION_INVITE_STRING "$"
+#define SESSION_CASE_SESATIVITY true
+//#define SESSION_PWD_PATTERN "^(/[^!#*?\\\`\'\"/]*)+$"
 #endif
-
+#define SESSION_CD_COMMAND "cd"
 #define SESSION_CURRENT_DIR_COMMAND_INTERNAL "__pwd__3820437_37781332_e73s36www7273932"
 #define SESSION_DOWNLAOD_COMMAND "__dls__"
 #define SESSION_DOWNLAOD_BIG_COMMAND "__dlb__"
 #define SESSION_RUN_COMMAND "__run__"
-
 
 class FileMessage;
 
@@ -45,6 +49,7 @@ public:
           FKilled(false),
           FFileMessage(NULL),
           FSendReceivedCommand(true)
+          //FPWDPattern(SESSION_PWD_PATTERN)
     {
         onConnected();
         init();
@@ -83,6 +88,7 @@ private:
     QString FStreamId;
     QString FCurrentDirectory;
     QString FLastWrittenCommand;
+    //QRegExp FPWDPattern;
 };
 
 #endif // SESSION_H
