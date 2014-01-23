@@ -23,7 +23,10 @@ void Session::handleMessage(const Message2 &AMessage)
         if (!handleData(AMessage.data())) {
             QByteArray dat = FTextCodec->fromUnicode(AMessage.data() + SESSION_END_OF_COMMAND);
             if (FSendReceivedCommand) {
-                send(QString(SESSION_INVITE_STRING) + " " + AMessage.data() + "\n");
+                QString prompt = SESSION_INVITE_STRING;
+                if (!prompt.isEmpty())
+                    prompt = FCurrentDirectory + prompt;
+                send(prompt + AMessage.data() + "\n");
             }
             FLastWrittenCommand = AMessage.data();
             FProcess->write(dat);
