@@ -86,6 +86,7 @@ void Session::onProcessReadyReadStandardOutput()
     QByteArray dat = FProcess->readAllStandardOutput();
     QString result = FTextCodec->toUnicode(dat);
     if (FLastWrittenCommand == SESSION_CURRENT_DIR_COMMAND_INTERNAL) {
+        FCurrentDirectory = "";
         QStringList lines = result.split('\n');
         foreach (QString l, lines) {
             QString trimmed = l.trimmed();
@@ -94,7 +95,7 @@ void Session::onProcessReadyReadStandardOutput()
                 break;
             }
         }
-        send(PWDMessage::createMessage(info(), result));
+        send(PWDMessage::createMessage(info(), FCurrentDirectory + SESSION_INVITE_STRING));
     }
     if (FFileMessage != NULL) {
 

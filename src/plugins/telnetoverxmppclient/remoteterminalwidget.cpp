@@ -81,7 +81,7 @@ void RemoteTerminalWidget::fConnection_received(const Message2& AMessage)
         QString prompt = AMessage.data().trimmed();
         if (prompt.length() > 30)
             prompt = prompt.mid(0, 30);
-        ui->promptLabel->setText(prompt + ">");
+        ui->promptLabel->setText(prompt);
     }
     else {
         QTextCursor cur = ui->txtHistory->textCursor();
