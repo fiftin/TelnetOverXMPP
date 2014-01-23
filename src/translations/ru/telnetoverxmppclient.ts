@@ -4,7 +4,7 @@
 <context>
     <name>RemoteTerminalDialog</name>
     <message>
-        <location filename="../../tnox/telnetoverxmppclient/remoteterminaldialog.ui" line="14"/>
+        <location filename="../../plugins/telnetoverxmppclient/remoteterminaldialog.ui" line="14"/>
         <source>Telnet over XMPP</source>
         <translation>Telnet через XMPP</translation>
     </message>
@@ -12,38 +12,57 @@
 <context>
     <name>RemoteTerminalWidget</name>
     <message>
-        <location filename="../../tnox/telnetoverxmppclient/remoteterminalwidget.ui" line="14"/>
+        <location filename="../../plugins/telnetoverxmppclient/remoteterminalwidget.ui" line="14"/>
         <source>Form</source>
         <translation>От</translation>
     </message>
     <message>
-        <location filename="../../tnox/telnetoverxmppclient/remoteterminalwidget.ui" line="49"/>
-        <location filename="../../tnox/telnetoverxmppclient/remoteterminalwidget.ui" line="115"/>
+        <location filename="../../plugins/telnetoverxmppclient/remoteterminalwidget.ui" line="48"/>
+        <location filename="../../plugins/telnetoverxmppclient/remoteterminalwidget.ui" line="114"/>
         <source>&gt;</source>
+        <translatorcomment>&gt;</translatorcomment>
         <translation>&gt;</translation>
     </message>
     <message>
-        <location filename="../../tnox/telnetoverxmppclient/remoteterminalwidget.ui" line="93"/>
+        <location filename="../../plugins/telnetoverxmppclient/remoteterminalwidget.ui" line="92"/>
         <source>&amp;Send</source>
         <translation>&amp;Отправить</translation>
     </message>
     <message>
-        <location filename="../../tnox/telnetoverxmppclient/remoteterminalwidget.cpp" line="61"/>
         <source>&lt;font color=&apos;blue&apos;&gt;***** Connection closed *****&lt;/font&gt;</source>
-        <translation>&lt;font color=&apos;blue&apos;&gt;***** Подключение закрыто *****&lt;/font&gt;</translation>
+        <translation type="obsolete">&lt;font color=&apos;blue&apos;&gt;***** Подключение закрыто *****&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="../../tnox/telnetoverxmppclient/remoteterminalwidget.cpp" line="69"/>
         <source>Select directory for save a file</source>
-        <translation>Выберите директорию для сохранения файла</translation>
+        <translation type="obsolete">Выберите директорию для сохранения файла</translation>
     </message>
     <message>
-        <location filename="../../tnox/telnetoverxmppclient/remoteterminalwidget.cpp" line="141"/>
+        <location filename="../../plugins/telnetoverxmppclient/remoteterminalwidget.cpp" line="59"/>
+        <source>&lt;font color=&apos;blue&apos;&gt;Connection closed&lt;/font&gt;</source>
+        <translation>&lt;font color=&apos;blue&apos;&gt;Подлючение закрыто&lt;/font&gt;</translation>
+    </message>
+    <message>
+        <location filename="../../plugins/telnetoverxmppclient/remoteterminalwidget.cpp" line="68"/>
+        <source>Select directory for save a file.</source>
+        <translation>Выбирите директорию для сохранения файла.</translation>
+    </message>
+    <message>
+        <location filename="../../plugins/telnetoverxmppclient/remoteterminalwidget.cpp" line="106"/>
+        <source>Connection error: </source>
+        <translation>Ошибка подключения:</translation>
+    </message>
+    <message>
+        <location filename="../../plugins/telnetoverxmppclient/remoteterminalwidget.cpp" line="131"/>
+        <source>Big File</source>
+        <translation>Большой файл</translation>
+    </message>
+    <message>
+        <location filename="../../plugins/telnetoverxmppclient/remoteterminalwidget.cpp" line="156"/>
         <source>Select File</source>
         <translation>Выбрать файл</translation>
     </message>
     <message>
-        <location filename="../../tnox/telnetoverxmppclient/remoteterminalwidget.cpp" line="141"/>
+        <location filename="../../plugins/telnetoverxmppclient/remoteterminalwidget.cpp" line="156"/>
         <source>Files (*.*)</source>
         <translation>Файлы (*.*)</translation>
     </message>
@@ -52,7 +71,7 @@
         <translation type="obsolete">Ctrl+C</translation>
     </message>
     <message>
-        <location filename="../../tnox/telnetoverxmppclient/remoteterminalwidget.cpp" line="123"/>
+        <location filename="../../plugins/telnetoverxmppclient/remoteterminalwidget.cpp" line="130"/>
         <source>Short File</source>
         <translation>Небольшой файл</translation>
     </message>
@@ -60,12 +79,12 @@
 <context>
     <name>TelnetOverXmppClient</name>
     <message>
-        <location filename="../../tnox/telnetoverxmppclient/telnetoverxmppclient.cpp" line="22"/>
+        <location filename="../../plugins/telnetoverxmppclient/telnetoverxmppclient.cpp" line="23"/>
         <source>Access to remote terminal over XMPP</source>
         <translation>Доступ к терминалу удаленного компьютера через XMPP</translation>
     </message>
     <message>
-        <location filename="../../tnox/telnetoverxmppclient/telnetoverxmppclient.cpp" line="133"/>
+        <location filename="../../plugins/telnetoverxmppclient/telnetoverxmppclient.cpp" line="124"/>
         <source>Remote terminal</source>
         <translation>Удаленный терминал</translation>
     </message>

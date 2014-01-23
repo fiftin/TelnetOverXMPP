@@ -1,8 +1,13 @@
 #include "telnetoverxmppsrv.h"
 #include "../telnetoverxmpp/base/exception.h"
 #include <definitions/resources.h>
+#include <definitions/actiongroups.h>
+#include "sessionsdialog.h"
+#include <utils/widgetmanager.h>
+
 TelnetOverXmppSrv::TelnetOverXmppSrv(QObject *parent) :
-    QObject(parent)
+    QObject(parent),
+    FSessionsDialog(NULL)
 {
 }
 
@@ -58,9 +63,8 @@ void TelnetOverXmppSrv::onShowTNOXMPPSessionsWindow(bool)
 {
     if (FSessionsDialog == NULL) {
         FSessionsDialog = new SessionsDialog(this, NULL);
-        //WidgetManager::setWindowSticky(FFileStreamsWindow, true);
     }
-    //WidgetManager::showActivateRaiseWindow(FFileStreamsWindow);
+    FSessionsDialog->showDialog();
 }
 
 bool TelnetOverXmppSrv::initObjects() {
@@ -72,10 +76,10 @@ bool TelnetOverXmppSrv::initObjects() {
     feature.icon = IconStorage::staticStorage(RSR_STORAGE_MENUICONS)->getIcon("telnetoverxmpp");
     FServiceDiscovery->insertDiscoFeature(feature);
 
-    if (FMainWindowPlugin != null && FTrayManager != null) {
+    if (FMainWindowPlugin != NULL && FTrayManager != NULL) {
         Action *action = new Action(this);
-        action->setText(tr("Telnet over XMPP Sessions"));
-        //action->setIcon(RSR_STORAGE_MENUICONS,MNI_FILESTREAMSMANAGER);
+        action->setText(tr("Remote Terminal Sessions"));
+        action->setIcon(RSR_STORAGE_MENUICONS, "telnetoverxmppicon");
         //action->setShortcutId(SCT_APP_SHOWFILETRANSFERS);
         connect(action,SIGNAL(triggered(bool)),SLOT(onShowTNOXMPPSessionsWindow(bool)));
 

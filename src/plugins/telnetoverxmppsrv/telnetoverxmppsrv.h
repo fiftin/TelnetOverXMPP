@@ -14,14 +14,15 @@
 
 #include "itelnetoverxmppsrv.h"
 #include "../telnetoverxmpp/base/telnetoverxmppbase.h"
+
 #include "session.h"
-#include "sessionsdialog.h"
 
 #if defined(Q_OS_WIN32) || defined(Q_OS_WIN64)
 #define TERMINAL_PROGRAM_NAME "cmd.exe"
 #else
 #define TERMINAL_PROGRAM_NAME "dash"
 #endif
+class SessionsDialog;
 
 class TelnetOverXmppSrv : public QObject, public IPlugin, public ITelnetOverXmppSrv,
         public IStanzaHandler, public TelnetOverXmppBase
