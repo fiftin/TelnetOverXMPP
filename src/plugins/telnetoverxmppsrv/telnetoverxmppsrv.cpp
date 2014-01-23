@@ -1,6 +1,5 @@
 #include "telnetoverxmppsrv.h"
 #include "../telnetoverxmpp/base/exception.h"
-
 #include <definitions/resources.h>
 TelnetOverXmppSrv::TelnetOverXmppSrv(QObject *parent) :
     QObject(parent)
@@ -17,7 +16,6 @@ void TelnetOverXmppSrv::pluginInfo(IPluginInfo *APluginInfo) {
 
 bool TelnetOverXmppSrv::initConnections(IPluginManager *APluginManager, int &AInitOrder) {
 
-
     IPlugin* plugin = APluginManager->pluginInterface("IServiceDiscovery").value(0, NULL);
     if (plugin != NULL) {
         FServiceDiscovery = qobject_cast<IServiceDiscovery*>(plugin->instance());
@@ -31,16 +29,38 @@ bool TelnetOverXmppSrv::initConnections(IPluginManager *APluginManager, int &AIn
     }
 
     plugin = APluginManager->pluginInterface("IFileStreamsManager").value(0,NULL);
-    if (plugin) {
+    if (plugin != NULL) {
         FFileManager = qobject_cast<IFileStreamsManager *>(plugin->instance());
     }
 
     plugin = APluginManager->pluginInterface("IFileTransfer").value(0,NULL);
-    if (plugin) {
+    if (plugin != NULL) {
         FFileTransfer = qobject_cast<IFileTransfer *>(plugin->instance());
     }
 
+    plugin = APluginManager->pluginInterface("IMainWindowPlugin").value(0,NULL);
+    if (plugin != NULL)
+    {
+        FMainWindowPlugin = qobject_cast<IMainWindowPlugin *>(plugin->instance());
+    }
+
+    plugin = APluginManager->pluginInterface("ITrayManager").value(0,NULL);
+    if (plugin != NULL)
+    {
+        FTrayManager = qobject_cast<ITrayManager *>(plugin->instance());
+    }
+
     return true;
+}
+
+
+void TelnetOverXmppSrv::onShowTNOXMPPSessionsWindow(bool)
+{
+    if (FSessionsDialog == NULL) {
+        FSessionsDialog = new SessionsDialog(this, NULL);
+        //WidgetManager::setWindowSticky(FFileStreamsWindow, true);
+    }
+    //WidgetManager::showActivateRaiseWindow(FFileStreamsWindow);
 }
 
 bool TelnetOverXmppSrv::initObjects() {
@@ -51,6 +71,21 @@ bool TelnetOverXmppSrv::initObjects() {
     feature.active = true;
     feature.icon = IconStorage::staticStorage(RSR_STORAGE_MENUICONS)->getIcon("telnetoverxmpp");
     FServiceDiscovery->insertDiscoFeature(feature);
+
+    if (FMainWindowPlugin != null && FTrayManager != null) {
+        Action *action = new Action(this);
+        action->setText(tr("Telnet over XMPP Sessions"));
+        //action->setIcon(RSR_STORAGE_MENUICONS,MNI_FILESTREAMSMANAGER);
+        //action->setShortcutId(SCT_APP_SHOWFILETRANSFERS);
+        connect(action,SIGNAL(triggered(bool)),SLOT(onShowTNOXMPPSessionsWindow(bool)));
+
+        if (FMainWindowPlugin)
+            FMainWindowPlugin->mainWindow()->mainMenu()->addAction(action,AG_MMENU_FILESTREAMSMANAGER,true);
+
+        if (FTrayManager)
+            FTrayManager->contextMenu()->addAction(action, AG_TMTM_FILESTREAMSMANAGER, true);
+    }
+
     return true;
 }
 

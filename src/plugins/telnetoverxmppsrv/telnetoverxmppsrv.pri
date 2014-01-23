@@ -9,7 +9,8 @@ HEADERS += \
     session.h \
     ../telnetoverxmpp/base/pwdmessage.h \
     ../telnetoverxmpp/base/controlcmessage.h \
-    ../telnetoverxmpp/base/commandmessage.h
+    ../telnetoverxmpp/base/commandmessage.h \
+    sessionsdialog.h
 
 SOURCES +=  \
     ../telnetoverxmpp/base/telnetoverxmppbase.cpp \
@@ -20,4 +21,8 @@ SOURCES +=  \
     session.cpp \
     ../telnetoverxmpp/base/pwdmessage.cpp \
     ../telnetoverxmpp/base/controlcmessage.cpp \
-    ../telnetoverxmpp/base/commandmessage.cpp
+    ../telnetoverxmpp/base/commandmessage.cpp \
+    sessionsdialog.cpp
+
+FORMS += \
+    sessionsdialog.ui
