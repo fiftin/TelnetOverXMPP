@@ -25,7 +25,7 @@ void Session::handleMessage(const Message2 &AMessage)
             if (FSendReceivedCommand) {
                 QString prompt = SESSION_INVITE_STRING;
                 if (!prompt.isEmpty())
-                    prompt = FCurrentDirectory + prompt;
+                    prompt = FCurrentDirectory + " " + prompt;
                 send(prompt + AMessage.data() + "\n");
             }
             FLastWrittenCommand = AMessage.data();
@@ -96,6 +96,7 @@ void Session::onProcessReadyReadStandardOutput()
             }
         }
         send(PWDMessage::createMessage(info(), FCurrentDirectory + SESSION_INVITE_STRING));
+        FLastWrittenCommand = "";
     }
     if (FFileMessage != NULL) {
 
