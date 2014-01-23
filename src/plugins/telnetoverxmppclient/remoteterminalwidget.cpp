@@ -78,7 +78,7 @@ void RemoteTerminalWidget::fConnection_received(const Message2& AMessage)
         }
     }
     else if (PWDMessage::isPWD(AMessage)) {
-        QString prompt = AMessage.data();
+        QString prompt = AMessage.data().trimmed();
         if (prompt.length() > 30)
             prompt = prompt.mid(0, 30);
         ui->promptLabel->setText(prompt + ">");

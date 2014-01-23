@@ -62,6 +62,7 @@ protected:
     virtual bool handleData(const QString& data);
 public slots:
     bool acceptFile();
+    void writePWD();
 protected slots:
     void onProcessReadyReadStandardOutput();
     void onProcessReadyReadStandardError();
@@ -69,7 +70,6 @@ protected slots:
     void onStreamStateChanged();
     void onStreamDestroyed();
 private:
-    void writePWD();
     QProcess *FProcess;
     QString FProgram;
     QStringList FArguments;
