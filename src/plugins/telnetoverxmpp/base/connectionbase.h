@@ -108,7 +108,9 @@ protected:
     IFileStreamsManager* getFileManager() const { return FFileManager; }
     IFileTransfer* getFileTransfer() const { return FFileTransfer; }
 
-
+    ConnectionInfo getInfo() const {
+        return FInfo;
+    }
 private:
     void setState(ConnectionState AState) { FState = AState; }
     IFileTransfer *FFileTransfer;

@@ -7,6 +7,8 @@
 #include <QMenu>
 #include <QFileDialog>
 #include "../telnetoverxmpp/base/filemessage.h"
+#include "../telnetoverxmpp/base/commandmessage.h"
+
 RemoteTerminalWidget::RemoteTerminalWidget(Connection* AConnection, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::RemoteTerminalWidget),
@@ -29,7 +31,7 @@ RemoteTerminalWidget::~RemoteTerminalWidget()
 
 void RemoteTerminalWidget::sendCommand(const QString& ACommand)
 {
-    connection()->send(ACommand);
+    connection()->send(CommandMessage::createMessage(connection()->info(), ACommand));
 }
 
 void RemoteTerminalWidget::setFocusToCommandLine()

@@ -7,6 +7,9 @@ HEADERS += \
     telnetoverxmppsrv.h \
     itelnetoverxmppsrv.h \
     session.h \
+    ../telnetoverxmpp/base/pwdmessage.h \
+    ../telnetoverxmpp/base/controlcmessage.h \
+    ../telnetoverxmpp/base/commandmessage.h
 
 SOURCES +=  \
     ../telnetoverxmpp/base/telnetoverxmppbase.cpp \
@@ -15,3 +18,6 @@ SOURCES +=  \
     ../telnetoverxmpp/base/filemessage.cpp \
     telnetoverxmppsrv.cpp \
     session.cpp \
+    ../telnetoverxmpp/base/pwdmessage.cpp \
+    ../telnetoverxmpp/base/controlcmessage.cpp \
+    ../telnetoverxmpp/base/commandmessage.cpp

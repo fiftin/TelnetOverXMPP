@@ -5,34 +5,31 @@ HEADERS += \
     ../telnetoverxmpp/base/connectionbase.h \
     ../telnetoverxmpp/base/message2.h \
     ../telnetoverxmpp/base/filemessage.h \
-#    base/telnetoverxmppbase.h \
-#    base/connectioninfo.h \
-#    base/connectionbase.h \
-#    base/message2.h \
-#    base/filemessage.h \
     connection.h \
     itelnetoverxmppclient.h \
     telnetoverxmppclient.h \
     remoteterminalwidget.h \
     remoteterminaldialog.h \
     commandlinewidget.h \
-    terminalhistorywidget.h
+    terminalhistorywidget.h \
+    ../telnetoverxmpp/base/pwdmessage.h \
+    ../telnetoverxmpp/base/controlcmessage.h \
+    ../telnetoverxmpp/base/commandmessage.h
 
 SOURCES += \
     ../telnetoverxmpp/base/telnetoverxmppbase.cpp \
     ../telnetoverxmpp/base/connectionbase.cpp \
     ../telnetoverxmpp/base/message2.cpp\
     ../telnetoverxmpp/base/filemessage.cpp \
-#    base/telnetoverxmppbase.cpp \
-#    base/connectionbase.cpp \
-#    base/message2.cpp\
-#    base/filemessage.cpp \
     connection.cpp \
     telnetoverxmppclient.cpp \
     remoteterminalwidget.cpp \
     remoteterminaldialog.cpp \
     commandlinewidget.cpp \
-    terminalhistorywidget.cpp
+    terminalhistorywidget.cpp \
+    ../telnetoverxmpp/base/pwdmessage.cpp \
+    ../telnetoverxmpp/base/controlcmessage.cpp \
+    ../telnetoverxmpp/base/commandmessage.cpp
 
 
 FORMS += \

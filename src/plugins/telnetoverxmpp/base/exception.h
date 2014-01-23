@@ -11,7 +11,6 @@ public:
     {
     }
     virtual ~Exception() throw() {
-        std::exception::~exception();
     }
 
     const QString& message() const {

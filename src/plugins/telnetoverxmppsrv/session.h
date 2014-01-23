@@ -69,6 +69,7 @@ protected slots:
     void onStreamStateChanged();
     void onStreamDestroyed();
 private:
+    void writePWD();
     QProcess *FProcess;
     QString FProgram;
     QStringList FArguments;
@@ -78,6 +79,7 @@ private:
     bool FSendReceivedCommand;
     QString FStreamId;
     QString FCurrentDirectory;
+    QString FLastWrittenCommand;
 };
 
 #endif // SESSION_H

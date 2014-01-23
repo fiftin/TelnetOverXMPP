@@ -2,7 +2,7 @@
 
 #include <interfaces/ifiletransfer.h>
 #include <interfaces/ifilestreamsmanager.h>
-
+#include "../telnetoverxmpp/base/controlcmessage.h"
 
 Connection::Connection(IMessageSender* AMessageSender, IFileTransfer *AFileTransfer,
                        IFileStreamsManager *AFileManager,
@@ -44,6 +44,6 @@ void Connection::handleMessage(const Message2 &AMessage)
 
 void Connection::sendControlC() const
 {
-    send(QString::fromAscii("\x03"));
+    send(ControlCMessage::createMessage(getInfo()));
 }
 

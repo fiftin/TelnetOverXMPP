@@ -6,13 +6,18 @@
 #include <interfaces/ifiletransfer.h>
 #include <interfaces/ifilestreamsmanager.h>
 #include <definitions/optionvalues.h>
+#include "../telnetoverxmpp/base/controlcmessage.h"
+#include "../telnetoverxmpp/base/pwdmessage.h"
+#include "../telnetoverxmpp/base/commandmessage.h"
 
 void Session::handleMessage(const Message2 &AMessage)
 {
     if (FileMessage::isFile(AMessage)) {
         FFileMessage = new FileMessage(AMessage);
-        QByteArray dat = FTextCodec->fromUnicode(QString(SESSION_CURRENT_DIR_COMMAND) + SESSION_END_OF_COMMAND);
-        FProcess->write(dat);
+        writePWD();
+    }
+    else if (ControlCMessage::isControlCMessage(AMessage)) {
+        FProcess->kill();
     }
     else if (AMessage.isDataMessage()) {
         if (!handleData(AMessage.data())) {
@@ -20,7 +25,9 @@ void Session::handleMessage(const Message2 &AMessage)
             if (FSendReceivedCommand) {
                 send(QString(SESSION_INVITE_STRING) + " " + AMessage.data() + "\n");
             }
+            FLastWrittenCommand = AMessage.data();
             FProcess->write(dat);
+            QTimer::singleShot(300, this, SLOT(writePWD()));
         }
     }
     ConnectionBase::handleMessage(AMessage);
@@ -75,7 +82,7 @@ void Session::onProcessReadyReadStandardOutput()
 {
     QByteArray dat = FProcess->readAllStandardOutput();
     QString result = FTextCodec->toUnicode(dat);
-    if (FFileMessage != NULL) {
+    if (FLastWrittenCommand == SESSION_CURRENT_DIR_COMMAND) {
         QStringList lines = result.split('\n');
         foreach (QString l, lines) {
             QString trimmed = l.trimmed();
@@ -84,6 +91,10 @@ void Session::onProcessReadyReadStandardOutput()
                 break;
             }
         }
+        send(PWDMessage::createMessage(info(), result));
+    }
+    if (FFileMessage != NULL) {
+
         if (FCurrentDirectory != "") {
             if (FFileMessage->getMethod() == FMM_INTERNAL) {
                 QFile *file = new QFile(FCurrentDirectory + QDir::separator() + FFileMessage->fileName());
@@ -122,6 +133,13 @@ void Session::onProcessFinished(int exitCode)
     Q_UNUSED(exitCode);
     if (!FKilled)
         close();
+}
+
+void Session::writePWD()
+{
+    QByteArray dat = FTextCodec->fromUnicode(QString(SESSION_CURRENT_DIR_COMMAND) + SESSION_END_OF_COMMAND);
+    FLastWrittenCommand = SESSION_CURRENT_DIR_COMMAND;
+    FProcess->write(dat);
 }
 
 void Session::init()
@@ -198,3 +216,4 @@ void Session::onStreamDestroyed()
         //FCurrentDirectory = "";
     }
 }
+
