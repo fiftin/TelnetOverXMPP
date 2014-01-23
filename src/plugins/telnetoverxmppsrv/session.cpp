@@ -27,7 +27,7 @@ void Session::handleMessage(const Message2 &AMessage)
             if (FSendReceivedCommand) {
                 QString prompt = SESSION_INVITE_STRING;
                 if (!prompt.isEmpty())
-                    prompt = FCurrentDirectory + " " + prompt;
+                    prompt = FCurrentDirectory + prompt + " ";
                 send(prompt + AMessage.data() + "\n");
             }
             FLastWrittenCommand = AMessage.data();
@@ -116,7 +116,7 @@ void Session::onProcessReadyReadStandardOutput()
                 }
             }
             else
-                send("File '" + FFileMessage->fileName() + "' <b>DO NOT</b> saved on remote PC.\n");
+                send("File '" + FFileMessage->fileName() + "' DO NOT saved on remote PC.\n");
             //delete FFileMessage;
             FFileMessage = NULL;
         }
@@ -198,10 +198,10 @@ void Session::onStreamStateChanged()
                 if (file.rename(fileNewPath))
                     send("File '" + fileName + "' saved on remote PC.\n");
                 else
-                    send("File '" + fileName + "' <b>DO NOT</b> saved on remote PC.\n");
+                    send("File '" + fileName + "' DO NOT moved to target dirctory.\n");
             }
             else {
-                send("File '" + fileName + "' <b>DO NOT</b> saved on remote PC.\n");
+                send("File '" + fileName + "' DO NOT saved on remote PC.\n");
 
             }
             FCurrentDirectory = "";
