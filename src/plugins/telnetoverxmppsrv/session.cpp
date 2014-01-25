@@ -30,10 +30,19 @@ void Session::handleMessage(const Message2 &AMessage)
                     prompt = FCurrentDirectory + prompt + " ";
                 send(prompt + AMessage.data() + "\n");
             }
-            FLastWrittenCommand = AMessage.data();
+            FLastWrittenCommand = AMessage.data().trimmed();
             FProcess->write(dat);
             if (FLastWrittenCommand.startsWith(QString(SESSION_CD_COMMAND) + " ", SESSION_CASE_SESATIVITY ? Qt::CaseSensitive : Qt::CaseInsensitive))
-                QTimer::singleShot(500, this, SLOT(writePWD()));
+                QTimer::singleShot(300, this, SLOT(writePWD()));
+#if defined(Q_OS_WIN32) || defined(Q_OS_WIN64)
+            else {
+                if (FLastWrittenCommand.length() == 2
+                        && FLastWrittenCommand[1] == ':'
+                        && (FLastWrittenCommand[0] >= 'a' && FLastWrittenCommand[0] <= 'z' ||
+                            FLastWrittenCommand[0] >= 'A' && FLastWrittenCommand[0] <= 'Z'))
+                    QTimer::singleShot(300, this, SLOT(writePWD()));
+            }
+#endif
         }
     }
     ConnectionBase::handleMessage(AMessage);
@@ -57,15 +66,6 @@ bool Session::handleData(const QString &data)
         }
         return true;
     }
-    // Run other program - NOT WORKS
-    //else if (data.startsWith(QString(SESSION_RUN_COMMAND) + " ", Qt::CaseInsensitive)) {
-    //    FKilled = true;
-    //    FProcess->close();
-    //    FProgram = data.mid(strlen(SESSION_RUN_COMMAND) + 1);
-    //    FArguments.clear();
-    //    init();
-    //    return true;
-    //}
     return false;
 }
 
@@ -149,7 +149,7 @@ void Session::writePWD()
 void Session::init()
 {
     FProcess = new QProcess();
-
+    FProcess->setWorkingDirectory(SESSION_DEFAULT_WORKING_DIRECTORY);
     this->connect(FProcess, SIGNAL(started()), SLOT(onStarted()));
     this->connect(FProcess, SIGNAL(readyReadStandardOutput()), SLOT(onProcessReadyReadStandardOutput()));
     this->connect(FProcess, SIGNAL(readyReadStandardError()), SLOT(onProcessReadyReadStandardError()));
@@ -215,7 +215,8 @@ void Session::onStreamDestroyed()
 
 void Session::onStarted()
 {
-    writePWD();
+    FCurrentDirectory = FProcess->workingDirectory();
+    send(PWDMessage::createMessage(info(), FCurrentDirectory));
 }
 
 

@@ -15,6 +15,7 @@
 #define SESSION_PWD_PATTERN ""
 #define SESSION_SEND_RECEIVED_COMMAND false
 #define SESSION_CASE_SESATIVITY false
+#define SESSION_DEFAULT_WORKING_DIRECTORY "C:\\"
 #else
 #define SESSION_END_OF_COMMAND "\n"
 #define SESSION_ENCODING_NAME "UTF-8"
@@ -23,12 +24,13 @@
 #define SESSION_INVITE_STRING "$"
 #define SESSION_CASE_SESATIVITY true
 #define SESSION_SEND_RECEIVED_COMMAND true
+#define SESSION_DEFAULT_WORKING_DIRECTORY "/"
 #endif
+
 #define SESSION_CD_COMMAND "cd"
 #define SESSION_CURRENT_DIR_COMMAND_INTERNAL "__pwd__3820437_37781332_e73s36www7273932"
-#define SESSION_DOWNLAOD_COMMAND "dl"
-#define SESSION_DOWNLAOD_BIG_COMMAND "dlb"
-//#define SESSION_RUN_COMMAND "__run__"
+#define SESSION_DOWNLAOD_COMMAND "!"
+#define SESSION_DOWNLAOD_BIG_COMMAND "@"
 
 class FileMessage;
 
@@ -87,7 +89,6 @@ private:
     QString FStreamId;
     QString FCurrentDirectory;
     QString FLastWrittenCommand;
-    //QRegExp FPWDPattern;
 };
 
 #endif // SESSION_H
