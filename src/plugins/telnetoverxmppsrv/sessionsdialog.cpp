@@ -30,9 +30,12 @@ void SessionsDialog::showDialog()
     FModel->clear();
     foreach (ConnectionBase *c, FServer->getConnections()) {
         Session *s = static_cast<Session*>(c);
-        QStandardItem *item = new QStandardItem(s->remoteJid().full());
-        item->setData(QVariant(s->info().sid));
-        FModel->appendRow(item);
+        QStandardItem *jid = new QStandardItem(s->remoteJid().full());
+        QStandardItem *sid = new QStandardItem(s->sid());
+        QList<QStandardItem *> items;
+        items.append(jid);
+        items.append(sid);
+        FModel->appendRow(items);
     }
 }
 
